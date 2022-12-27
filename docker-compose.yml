@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres
+    container_name: database
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USERNAME: "username"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - ./savings/datasets/createdb.sql:/docker-entrypoint-initdb.d/createdb.sql
+      - ./savings/datasets:/var/lib/postgresql/savings/datasets
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python app.py
+    container_name: app
+    environment:
+      POSTGRES_HOST: "host"
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "5000:5000"
+
